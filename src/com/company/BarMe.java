@@ -7,66 +7,138 @@ public class BarMe {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter your current location:");
-        System.out.print("length: ");
+        System.out.println("Въведете текущата си локация:");
+        System.out.print("дължина: ");
         double length = scanner.nextDouble();
-        System.out.print("width: ");
+        System.out.print("ширина: ");
         double width = scanner.nextDouble();
         printOptions(length, width);
     }
 
     public static void printOptions(double length, double width) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Select an potion:");
-        System.out.println("(1) List all restaurants;");
-        System.out.println("(2) List of open restaurants;");
-        System.out.println("(3) Map of the nearest restaurant;");
+        System.out.println("Изберете опция:");
+        System.out.println("(1) Списък на всички заведения;");
+        System.out.println("(2) Списък на всички отворени заведения;");
+        System.out.println("(3) Карта;");
         int inputOption = scanner.nextInt();
 
         if (inputOption == 1) {
             firstOption(length, width);
         } else if (inputOption == 2) {
             secondOption();
+        } else if (inputOption == 3) {
+            thirdOption();
+        } else if (inputOption < 0 || inputOption > 3) {
+            System.out.println("Няма такава опция.");
         }
     }
 
     public static void firstOption(double length, double width) {
-//        int[] arrangedMeters = arrangeTheMeters(length, width);
-//        for (int i = 0; i < arrangedMeters.length; i++) {
-//            for (i = 0; i < workTime().length; i++) {
-//                System.out.println(workTime()[i] + " - " + arrangedMeters[i]);
-//            }
-//        }
-
-        arrangeTheMeters(length, width);
-    }
-    private static void arrangeTheMeters(double length, double width) {
+        String[] names = restaurantNames();
         int[] meters = getMeters(length, width);
-        int swap = 0;
+        String[] meter = new String[meters.length];
         for (int i = 0; i < meters.length; i++) {
-            for (int j = i + 1; j < meters.length; j++) {
-                if (meters[i] > meters[j]) {
-                    swap = meters[i];
-                    meters[i] = meters[j];
-                    meters[j] = swap;
-                }
+            meter[i] = Integer.toString(meters[i]);
+        }
+        String[] workTime = workTime();
+        String[][] data = new String[10][3];
+        for (int row = 0; row < data.length; row++) {
+            System.out.print(row + 1 + "." + " ");
+            for (int col = 0; col < data[0].length; col++) {
+                data[row][0] = names[row];
+                data[row][1] = workTime[row];
+                data[row][2] = meter[row];
+                System.out.print(data[row][col] + " ");
+            }
+            System.out.print("м");
+            System.out.println();
+        }
+    }
+
+    public static void secondOption() {
+        Scanner scanner = new Scanner(System.in);
+        String[] workTime = workTime();
+        String[] names = restaurantNames();
+
+        System.out.println("Моля въведете сегашния час:");
+        System.out.print("Час: ");
+        int hour = scanner.nextInt();
+        System.out.print("Минути: ");
+        int minutes = scanner.nextInt();
+
+        if (hour > 0 && hour < 21) {
+            for (int i = 0; i < workTime.length; i++) {
+                System.out.println(i + 1 + "." + " " + names[i] + workTime[i]);
+            }
+        } else if (hour > 0 && hour < 22) {
+            for (int i = 1; i < workTime.length; i++) {
+                System.out.println(i + 1 + "." + " " + names[i] + workTime[i]);
+            }
+        } else if (hour > 0 && hour < 23) {
+            for (int i = 2; i < workTime.length; i++) {
+                System.out.println(i + 1 + "." + " " + names[i] + workTime[i]);
+            }
+        } else if (hour == 23) {
+            for (int i = 4; i < workTime.length; i++) {
+                System.out.println(i + 1 + "." + " " + names[i] + workTime[i]);
+            }
+        } else if (hour < 0 || hour > 23) {
+            System.out.println("Няма такъв час.");
+        }
+    }
+
+    public static void thirdOption() {
+        String[] names = restaurantNames();
+        printMap();
+        System.out.println();
+        System.out.println("Х - ти си тук");
+        for (int i = 0; i < names.length; i++) {
+            System.out.println(i + 1 + ". " + names[i]);
+        }
+    }
+
+    public static String[][] printMap() {
+        String[][] map = new String[11][31];
+        System.out.println();
+        for (int i = 1; i < map.length; i++) {
+            for (int j = 1; j < map[0].length; j++) {
+                map[i][j] = "  ";
             }
         }
-        System.out.println(Arrays.toString(meters));
+        for (int row = 0; row < map.length; row++) {
+            for (int col = 0; col < map[0].length; col++) {
+                map[0][col] = "--";
+                map[row][0] = "|";
+                map[5][16] = "X ";
+                map[row][30] = "|";
+                map[10][col] = "--";
+                System.out.print(map[row][col]);
+            }
+            System.out.println();
+        }
+        return map;
     }
-    private static double[] getLengths() {
-        double thePintLength = 43.206455;
-        double nashentsiLength = 43.2004764;
-        double bulgareLength = 43.1996525;
-        double viliLength = 43.2063501;
-        double metalikLength = 43.2058534;
-        double hemusLength = 43.2020833;
-        double zlatenDrakonLength = 43.2050382;
-        double piazzaItaliaLength = 43.2033787;
-        double theOldHouseLength = 43.2025569;
-        double tracianPrincesLength = 43.2046545;
-        return new double[]{piazzaItaliaLength, zlatenDrakonLength, nashentsiLength, theOldHouseLength, thePintLength,
-                bulgareLength, viliLength, metalikLength, hemusLength, tracianPrincesLength};
+
+    public static int[] getMeters(double length, double width) {
+        double[] lengths = getLengths();
+        double[] widths = getWidths();
+        int[] getMeters = new int[lengths.length];
+        int k = 0;
+        for (int i = 0; i < lengths.length; i++) {
+            for (i = 0; i < widths.length; i++) {
+                int radius = 6371;
+                double longitude = Math.toRadians(length - lengths[i]);
+                double latitude = Math.toRadians(width - widths[i]);
+                double a = Math.sin(longitude / 2) * Math.sin(longitude / 2) + Math.cos(Math.toRadians(length))
+                        * Math.cos(Math.toRadians(lengths[i])) * Math.sin(latitude / 2) * Math.sin(latitude / 2);
+                double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                double d = (radius * c) * 1000;
+                getMeters[i] = (int) Math.round(d);
+                k++;
+            }
+        }
+        return getMeters;
     }
 
     private static double[] getWidths() {
@@ -85,29 +157,38 @@ public class BarMe {
         return widths;
     }
 
-    public static int[] getMeters(double length, double width) {
-        double[] lengths = getLengths();
-        double[] widths = getWidths();
-
-        int k = 0;
-        int[] meters = new int[lengths.length];
-        for (int i = 0; i < lengths.length; i++) {
-            for (i = 0; i < widths.length; i++) {
-                int radius = 6371;
-                double longitude = Math.toRadians(length - lengths[i]);
-                double latitude = Math.toRadians(width - widths[i]);
-                double a = Math.sin(longitude / 2) * Math.sin(longitude / 2) + Math.cos(Math.toRadians(length))
-                        * Math.cos(Math.toRadians(lengths[i])) * Math.sin(latitude / 2) * Math.sin(latitude / 2);
-                double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                double d = (radius * c) * 1000;
-                int getMeters = (int) Math.round(d);
-                meters[k] = getMeters;
-                k++;
-            }
-        }
-        return meters;
+    public static double[] getLengths() {
+        double thePintLength = 43.206455;
+        double nashentsiLength = 43.2004764;
+        double bulgareLength = 43.1996525;
+        double viliLength = 43.2063501;
+        double metalikLength = 43.2058534;
+        double hemusLength = 43.2020833;
+        double zlatenDrakonLength = 43.2050382;
+        double piazzaItaliaLength = 43.2033787;
+        double theOldHouseLength = 43.2025569;
+        double tracianPrincesLength = 43.2046545;
+        return new double[]{piazzaItaliaLength, zlatenDrakonLength, nashentsiLength, theOldHouseLength, thePintLength,
+                bulgareLength, viliLength, metalikLength, hemusLength, tracianPrincesLength};
     }
-    public static String[] restaurantNames (){
+
+    private static String[] workTime() {
+        String piаzzaItalia = " (12:00 - 21:00) ";
+        String zlatenDrakon = " (11:30 - 22:00) ";
+        String nashentsi = " (11:00 - 23:00) ";
+        String theOldHouse = " (08:00 - 23:00) ";
+        String pintata = " (11:00 - 0:00) ";
+        String bulgare = " (11:00 - 0:00) ";
+        String vili = " (08:00 - 0:00) ";
+        String metalik = " (09:00 - 0:00) ";
+        String hemus = " (07:00 - 0:00) ";
+        String tracianPrinces = " (08:00 - 0:00) ";
+        String[] workTime = {piаzzaItalia, zlatenDrakon, nashentsi, theOldHouse, pintata, bulgare, vili, metalik, hemus,
+                tracianPrinces};
+        return workTime;
+    }
+
+    public static String[] restaurantNames() {
         String piаzzaItalia = "Piazza Italia";
         String zlatenDrakon = "Китайски ресторант Златен Дракон";
         String nashentsi = "Нашенци";
@@ -119,88 +200,7 @@ public class BarMe {
         String hemus = "Хемус";
         String tracianPrinces = "Тракийска Принцеса";
         String[] restaurantNames = {piаzzaItalia, zlatenDrakon, nashentsi, theOldHouse, pintata, bulgare, vili, metalik,
-        hemus, tracianPrinces};
+                hemus, tracianPrinces};
         return restaurantNames;
-    }
-
-
-
-    private static String[] workTime() {
-        Scanner scanner = new Scanner(System.in);
-        String piаzzaItalia = "Piazza Italia                    - 12:00 - 21:00";
-        String zlatenDrakon = "Китайски ресторант Златен Дракон - 11:30 - 22:00";
-        String nashentsi = "Нашенци                          - 11:00 - 23:00";
-        String theOldHouse = "Старата къща                     - 08:00 - 23:00";
-        String pintata = "Пинтата                          - 11:00 - 0:00";
-        String bulgare = "Българе                          - 11:00 - 0:00";
-        String vili = "Вили                             - 08:00 - 0:00";
-        String metalik = "Металик                          - 09:00 - 0:00";
-        String hemus = "Хемус                            - 07:00 - 0:00";
-        String tracianPrinces = "Тракийска Принцеса               - 08:00 - 0:00";
-        String[] workTime = {piаzzaItalia, zlatenDrakon, nashentsi, theOldHouse, pintata, bulgare, vili, metalik, hemus,
-                 tracianPrinces};
-        return workTime;
-    }
-
-
-    public static void secondOption() {
-        Scanner scanner = new Scanner(System.in);
-        String pintata = "Пинтата                          - 11:00 - 0:00";
-        String nashentsi = "Нашенци                          - 11:00 - 23:00";
-        String bulgare = "Българе                          - 11:00 - 0:00";
-        String vili = "Вили                             - 08:00 - 0:00";
-        String metalik = "Металик                          - 09:00 - 0:00";
-        String hemus = "Хемус                            - 07:00 - 0:00";
-        String zlatenDrakon = "Китайски ресторант Златен Дракон - 11:30 - 22:00";
-        String piаzzaItalia = "Piazza Italia                    - 12:00 - 21:00";
-        String theOldHouse = "Старата къща                     - 08:00 - 23:00";
-        String tracianPrinces = "Тракийска Принцеса               - 08:00 - 0:00";
-
-        System.out.println("Please enter the current time:");
-        System.out.print("Hour: ");
-        int hour = scanner.nextInt();
-        System.out.print("Minutes: ");
-        int minutes = scanner.nextInt();
-
-        if (hour > 0 && hour < 21) {
-            System.out.println(piаzzaItalia);
-            System.out.println(zlatenDrakon);
-            System.out.println(theOldHouse);
-            System.out.println(nashentsi);
-            System.out.println(pintata);
-            System.out.println(bulgare);
-            System.out.println(vili);
-            System.out.println(metalik);
-            System.out.println(hemus);
-            System.out.println(tracianPrinces);
-        } else if (hour > 0 && hour < 22) {
-            System.out.println(zlatenDrakon);
-            System.out.println(theOldHouse);
-            System.out.println(nashentsi);
-            System.out.println(pintata);
-            System.out.println(bulgare);
-            System.out.println(vili);
-            System.out.println(metalik);
-            System.out.println(hemus);
-            System.out.println(tracianPrinces);
-        } else if (hour > 0 && hour < 23) {
-            System.out.println(theOldHouse);
-            System.out.println(nashentsi);
-            System.out.println(pintata);
-            System.out.println(bulgare);
-            System.out.println(vili);
-            System.out.println(metalik);
-            System.out.println(hemus);
-            System.out.println(tracianPrinces);
-        } else if (hour == 23) {
-            System.out.println(pintata);
-            System.out.println(bulgare);
-            System.out.println(vili);
-            System.out.println(metalik);
-            System.out.println(hemus);
-            System.out.println(tracianPrinces);
-        } else if (hour < 0 || hour > 23) {
-            System.out.println("There is no such hour.");
-        }
     }
 }
